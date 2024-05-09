@@ -82,7 +82,7 @@ export class AppService {
       !response ||
       !response.choices ||
       response.choices.length === 0 ||
-      response.choices[0].message.content ||
+      !response.choices[0].message.content ||
       response.choices[0].message.content.includes('Sorry')
     )
       return {
