@@ -1,20 +1,28 @@
 import { Body, Controller, Get, Param, Post, Query, Req } from '@nestjs/common';
+import { ImageReaderService } from './image-reader.service';
 import { AppService } from './app.service';
+import { FoodsResponseDTO, FoodsService, QueryParams } from './foods.service';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(
+    private readonly imageReaderservice: ImageReaderService,
+    private readonly appService: AppService,
+    private readonly foodsService: FoodsService,
+  ) {}
 
   @Get('healthcheck')
   getHealthcheck(): string {
     return this.appService.getHealthcheck();
   }
 
+  @Get('foods')
+  async getFoods(@Query() query: QueryParams): Promise<FoodsResponseDTO> {
+    return this.foodsService.getFoods(query);
+  }
+
   @Post('read-foods-from-image')
-  async readFoodsFromImage(
-    @Body() body: { image: string },
-    @Query('is-test') isTest: string,
-  ) {
+  async readFoodsFromImage(@Body() body: { image: string }) {
     const foods = [
       {
         name: 'Pizza',
@@ -38,11 +46,6 @@ export class AppController {
         unit: 'fatia',
       },
     ];
-    if (isTest === 'true')
-      return {
-        error: null,
-        foods,
-      };
-    return await this.appService.readFoodsFromImage(body.image);
+    return await this.imageReaderservice.readFoodsFromImage(body.image);
   }
 }
