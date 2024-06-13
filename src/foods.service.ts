@@ -44,9 +44,9 @@ export interface FoodsResponseDTO {
 
 @Injectable()
 export class FoodsService {
-  constructor(private readonly httpService: HttpService) {}
+  constructor(private readonly httpService: HttpService) { }
 
-  async getFoods(query: QueryParams): Promise<FoodsResponseDTO> {
+  async getFoods(query: QueryParams): Promise<FoodsResponseDTO | any> {
     try {
       const { data }: { data: FoodsDTO } = await firstValueFrom(
         this.httpService.get(
@@ -54,9 +54,10 @@ export class FoodsService {
         ),
       );
 
-      if (parseInt(data.foods.total_results) === 0) {
+
+      if (!data.foods || parseInt(data.foods.total_results) === 0) {
         throw new Error(
-          'Não foram encontrados alimentos com o nome informado.',
+          'Não foram encontrados alimentos com o nome informado.' + JSON.stringify(data),
         );
       }
       const foods: FoodResponseDTO[] = [];
@@ -88,7 +89,8 @@ export class FoodsService {
       };
       return response;
     } catch (error) {
-      throw new Error('Não foi possível buscar os alimentos. Error: ' + error);
+      return 'Não foi possível buscar os alimentos. ' + error;
+      throw new Error('Não foi possível buscar os alimentos. ' + error);
     }
   }
 }

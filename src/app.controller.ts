@@ -2,6 +2,9 @@ import { Body, Controller, Get, Param, Post, Query, Req } from '@nestjs/common';
 import { ImageReaderService } from './image-reader.service';
 import { AppService } from './app.service';
 import { FoodsResponseDTO, FoodsService, QueryParams } from './foods.service';
+import { RegisterService } from './user/register.service';
+import { LoginService } from './user/login.service';
+import { UserDTO } from './DTOS/UserDTO';
 
 @Controller()
 export class AppController {
@@ -9,7 +12,9 @@ export class AppController {
     private readonly imageReaderservice: ImageReaderService,
     private readonly appService: AppService,
     private readonly foodsService: FoodsService,
-  ) {}
+    private readonly registerService: RegisterService,
+    private readonly loginService: LoginService,
+  ) { }
 
   @Get('healthcheck')
   getHealthcheck(): string {
@@ -21,31 +26,18 @@ export class AppController {
     return this.foodsService.getFoods(query);
   }
 
+  @Post('register')
+  async register(@Query() user: UserDTO): Promise<any> {
+    return this.registerService.register(user);
+  }
+
+  @Post('login')
+  async login(@Query() user: UserDTO): Promise<UserDTO> {
+    return this.loginService.login(user);
+  }
+
   @Post('read-foods-from-image')
   async readFoodsFromImage(@Body() body: { image: string }) {
-    const foods = [
-      {
-        name: 'Pizza',
-        filling: ['queijo', 'presunto'],
-        fillingIdentified: true,
-        quantity: 1,
-        unit: 'fatia',
-      },
-      {
-        name: 'Macarrão',
-        filling: [],
-        fillingIdentified: false,
-        quantity: 1,
-        unit: 'prato',
-      },
-      {
-        name: 'Bolo',
-        filling: ['chocolate'],
-        fillingIdentified: false,
-        quantity: 2,
-        unit: 'fatia',
-      },
-    ];
     return await this.imageReaderservice.readFoodsFromImage(body.image);
   }
 }
