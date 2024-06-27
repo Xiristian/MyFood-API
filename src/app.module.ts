@@ -13,7 +13,7 @@ import { RegisterService } from './user/register.service';
 @Module({
   imports: [
     CacheModule.register({
-      ttl: 3600,
+      ttl: 3600000,
     }),
     ConfigModule.forRoot(),
     HttpModule.registerAsync({

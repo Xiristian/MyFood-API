@@ -14,7 +14,7 @@ export class AppController {
     private readonly foodsService: FoodsService,
     private readonly registerService: RegisterService,
     private readonly loginService: LoginService,
-  ) { }
+  ) {}
 
   @Get('healthcheck')
   getHealthcheck(): string {
@@ -23,21 +23,42 @@ export class AppController {
 
   @Get('foods')
   async getFoods(@Query() query: QueryParams): Promise<FoodsResponseDTO> {
-    return this.foodsService.getFoods(query);
+    const foods = await this.foodsService.getFoods(query);
+    return foods;
   }
 
   @Post('register')
-  async register(@Query() user: UserDTO): Promise<any> {
+  async register(@Body() user: UserDTO): Promise<any> {
     return this.registerService.register(user);
   }
 
   @Post('login')
-  async login(@Query() user: UserDTO): Promise<UserDTO> {
+  async login(@Body() user: UserDTO): Promise<UserDTO> {
     return this.loginService.login(user);
   }
 
   @Post('read-foods-from-image')
-  async readFoodsFromImage(@Body() body: { image: string }) {
-    return await this.imageReaderservice.readFoodsFromImage(body.image);
+  async readFoodsFromImage(
+    @Body() body: { image: string },
+  ): Promise<FoodsResponseDTO> {
+    const foodsFromGPT = await this.imageReaderservice.readFoodsFromImage(
+      body.image,
+    );
+
+    const foods: FoodsResponseDTO = {
+      foods: [],
+      max_results: '',
+      page_number: '',
+      total_results: '',
+    };
+    for (const foodFromGPT of foodsFromGPT.foods) {
+      const food = await this.foodsService.getFoods({
+        page: 1,
+        pageSize: 1,
+        search: foodFromGPT.name,
+      });
+      foods.foods.push(food.foods[0]);
+    }
+    return foods;
   }
 }

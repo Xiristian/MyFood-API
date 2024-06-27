@@ -22,7 +22,7 @@ export class ImageReaderService {
         `https://${accountName}.blob.core.windows.net`,
         sharedKeyCredential,
       );
-      const containerClient = blobServiceClient.getContainerClient('bronze');
+      const containerClient = blobServiceClient.getContainerClient('landing-zone');
       const blockBlockClient = containerClient.getBlockBlobClient('image.png');
       const uploadBlobResponse = await blockBlockClient.uploadData(data);
       if (uploadBlobResponse._response.status !== 201) {
@@ -37,10 +37,10 @@ export class ImageReaderService {
 
   async sendImageToOpenAI() {
     try {
-      const question = `O que há nesta imagem? Por favor, identifique os alimentos presentes na imagem e me envie um JSON com as seguintes informações para cada alimento: {nome: string; recheio: string[]; identificouRecheio: boolean; quantidade: number; unidade: string;}. Nome (ex: pizza, macarrão, bolo), Recheio (Se identificado, caso não, informe recheios comuns para o alimento), Identificou recheio (Caso o recheio tenha sido identificado marque como "true", caso não tenha sido identificado, mas tenha informado possíveis recheios marque "false", caso não tenha sido informado recheios, marque "false"), Quantidade (ex: 1, 1.5, 2), Unidade (ex: fatia, prato, porção, unidade). Exemplo de JSON: {"alimentos": [{"nome": "Pizza",  "recheio": ["queijo", "presunto"], identificouRecheio: true, "quantidade": 1, "unidade": "fatia"}, {"nome": "Macarrão", "recheio": [], identificouRecheio: false, "quantidade": 1, "unidade": "prato"}, {"nome": "Bolo", "recheio": ["chocolate"], identificouRecheio: false, "quantidade": 2, "unidade": "fatia"}]} A resposta deve conter apenas o JSON com as informações sem formatação`;
+      const question = `O que há nesta imagem? Por favor, identifique os alimentos presentes na imagem e me envie um JSON com as seguintes informações para cada alimento: {nome: string; recheio: string[]; identificouRecheio: boolean; quantidade: number; unidade: string;}. Nome (ex: pizza, macarrão, bolo), Recheio (Se identificado, caso não, informe recheios comuns para o alimento), Identificou recheio (Caso o recheio tenha sido identificado marque como "true", caso não tenha sido identificado, mas tenha informado possíveis recheios marque "false", caso não tenha sido informado recheios, marque "false"), Quantidade (ex: 1, 1.5, 2), Unidade (ex: fatia, prato, porção, unidade). Exemplo de JSON: {"alimentos": [{"nome": "Pizza",  "recheio": ["queijo", "presunto"], identificouRecheio: true, "quantidade": 1, "unidade": "fatia"}, {"nome": "Macarrão", "recheio": [], identificouRecheio: false, "quantidade": 1, "unidade": "prato"}, {"nome": "Bolo", "recheio": ["chocolate"], identificouRecheio: false, "quantidade": 2, "unidade": "fatia"}]} A resposta deve conter apenas o JSON com as informações sem formatação, informe o nome dos alimentos em inglês.`;
       const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
       const accountName = process.env.AZURE_STORAGE_ACCOUNT_NAME;
-      const image = `https://${accountName}.blob.core.windows.net/bronze/image.png`;
+      const image = `https://${accountName}.blob.core.windows.net/landing-zone/image.png`;
       return await openai.chat.completions.create({
         model: 'gpt-4-vision-preview',
         messages: [

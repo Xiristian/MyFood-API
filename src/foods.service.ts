@@ -44,7 +44,7 @@ export interface FoodsResponseDTO {
 
 @Injectable()
 export class FoodsService {
-  constructor(private readonly httpService: HttpService) { }
+  constructor(private readonly httpService: HttpService) {}
 
   async getFoods(query: QueryParams): Promise<FoodsResponseDTO | any> {
     try {
@@ -54,14 +54,19 @@ export class FoodsService {
         ),
       );
 
-
-      if (!data.foods || parseInt(data.foods.total_results) === 0) {
+      if (!data?.foods?.total_results) throw new Error(JSON.stringify(data));
+      if (parseInt(data.foods.total_results) === 0) {
         throw new Error(
-          'Não foram encontrados alimentos com o nome informado.' + JSON.stringify(data),
+          'Não foram encontrados alimentos com o nome informado.' +
+            JSON.stringify(data),
         );
       }
       const foods: FoodResponseDTO[] = [];
+      if (!Array.isArray(data.foods.food)) {
+        data.foods.food = [data.foods.food] as any;
+      }
       for (const food of data.foods.food) {
+        if (!food) continue;
         const foo = food.food_description.match(
           /Per (\d+\/\d+|\d+) ?([a-zA-Z]+)/,
         );

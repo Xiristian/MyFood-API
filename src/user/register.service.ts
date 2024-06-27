@@ -6,10 +6,12 @@ import { UserDTO } from 'src/DTOS/UserDTO';
 
 @Injectable()
 export class RegisterService {
-    constructor(@Inject(CACHE_MANAGER)
-    private readonly cacheManager: Cache) { }
+  constructor(
+    @Inject(CACHE_MANAGER)
+    private readonly cacheManager: Cache,
+  ) {}
 
-    async register(user: UserDTO) {
-        await this.cacheManager.set('user', user);
-    }
+  async register(user: UserDTO) {
+    await this.cacheManager.set('user', user);
+  }
 }
