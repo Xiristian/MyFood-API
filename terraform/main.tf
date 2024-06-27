@@ -1,5 +1,5 @@
 resource "azurerm_storage_account" "storage" {
-  name                     = "datalake-myfood"
+  name                     = "datalakemyfood"
   resource_group_name      = var.resource_group_name
   location                 = var.location
   account_tier             = "Standard"
@@ -22,5 +22,5 @@ resource "azurerm_storage_account" "storage" {
 resource "azurerm_storage_container" "landing-zone" {
   name                  = "landing-zone"
   storage_account_name  = azurerm_storage_account.storage.name
-  container_access_type = "private"
+  container_access_type = "container"
 }

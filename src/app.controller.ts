@@ -57,7 +57,22 @@ export class AppController {
         pageSize: 1,
         search: foodFromGPT.name,
       });
-      foods.foods.push(food.foods[0]);
+      if (food?.foods) foods.foods.push(food.foods[0]);
+      else
+        foods.foods.push({
+          calories: 0,
+          food_name: foodFromGPT.name,
+          food_description: '',
+          food_id: '',
+          food_type: '',
+          food_url: '',
+          brand_name: '',
+          fat: 0,
+          carbs: 0,
+          protein: 0,
+          quantity: foodFromGPT.quantity,
+          unit: foodFromGPT.unit,
+        });
     }
     return foods;
   }
