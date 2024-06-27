@@ -1,6 +1,6 @@
 ## 📓 Pré-Requisitos
 
-- Seguir passos do seguinte [README.MD](./terraform/readme.md)
+- Seguir passos do seguinte [README.MD](./terraform/README.md)
 
 ## 👣 Passos
 
